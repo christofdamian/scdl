@@ -592,6 +592,8 @@ def download_url(client: SoundCloud, kwargs: SCDLArgs) -> None:
             for i, track in itertools.islice(enumerate(tracks, 1), offset, None):
                 logger.info(f"track n°{i} of {user.track_count}")
                 download_track(client, track, kwargs, exit_on_fail=kwargs["strict_playlist"])
+                if kwargs.get("n") and i >= int(kwargs.get("n")):
+                    break
             logger.info(f"Downloaded all tracks of user {user.username}!")
         elif kwargs.get("a"):
             logger.info(f"Retrieving all tracks & reposts of user {user.username}...")
@@ -721,13 +723,13 @@ def sync(
         logger.info("No tracks to download. Exiting...")
         sys.exit(0)
 
-
 def download_playlist(
     client: SoundCloud,
     playlist: Union[AlbumPlaylist, BasicAlbumPlaylist],
     kwargs: SCDLArgs,
 ) -> None:
     """Downloads a playlist"""
+
     if kwargs.get("no_playlist"):
         logger.info("Skipping playlist...")
         return
